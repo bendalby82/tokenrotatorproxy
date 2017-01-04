@@ -22,5 +22,8 @@ http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
   
 Nginx http auth request module  
 https://nginx.org/en/docs/http/ngx_http_auth_request_module.html  
+  
+The Three R’s of Enterprise Security: Rotate, Repave, and Repair  
+https://medium.com/built-to-adapt/the-three-r-s-of-enterprise-security-rotate-repave-and-repair-f64f6d6ba29d#.bxjtdmav4  
 
 
