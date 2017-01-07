@@ -63,4 +63,4 @@ def after_request(response):
 
 if __name__ == '__main__':
     requests.packages.urllib3.disable_warnings()
-    app.run(host='0.0.0.0',port=8020)
+    app.run(host='0.0.0.0',port=80)

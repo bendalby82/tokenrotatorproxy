@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVERCONTAINER="authserver"
+SERVERCONTAINER="secureservice"
 RUNNING=$(docker ps -a | grep -c $SERVERCONTAINER)
 if [ $RUNNING -gt 0 ]; then
     docker rm -f $SERVERCONTAINER
@@ -9,6 +9,6 @@ else
     echo "No instance of $SERVERCONTAINER found."
 fi
 
-docker run --name $SERVERCONTAINER --network=untrustednet --restart=always -p 8010:80 \
--v /Users/bendalby/GitHub/tokenrotatorproxy/authserver/:/app -d jazzdd/alpine-flask
+docker run --name $SERVERCONTAINER --network=securenet --restart=always -p 8011:80 \
+-v /Users/bendalby/GitHub/tokenrotatorproxy/secureservice/:/app -d jazzdd/alpine-flask
 
