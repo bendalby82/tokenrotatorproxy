@@ -10,5 +10,5 @@ else
 fi
 
 docker run --name $SERVERCONTAINER --network=securenet --restart=always -p 8011:80 \
--v /Users/bendalby/GitHub/tokenrotatorproxy/secureservice/:/app -d jazzdd/alpine-flask
+-v $PWD/secureservice/:/app -d jazzdd/alpine-flask
 

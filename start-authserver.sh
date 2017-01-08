@@ -10,5 +10,5 @@ else
 fi
 
 docker run --name $SERVERCONTAINER --network=untrustednet --restart=always -p 8010:80 \
--v /Users/bendalby/GitHub/tokenrotatorproxy/authserver/:/app -d jazzdd/alpine-flask
+-v $PWD/authserver/:/app -d jazzdd/alpine-flask
 
