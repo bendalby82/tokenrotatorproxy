@@ -10,6 +10,9 @@ Authenticating proxy that *pushes* tokens to an end point.
     #Expired token
     curl -X GET -H "Otpcode: abc123" -H "Cache-Control: no-cache" "http://testngx/" 
     
+    #Prime client with an expired code
+    curl -X POST -F "Otpcode=abc123" "http://exampleclient/tokencatcher"
+    
 # Notes  
 Nginx - Beginner’s Guide  
 http://nginx.org/en/docs/beginners_guide.html  
