@@ -8,17 +8,22 @@
 
 from flask import Flask, jsonify, request
 from flask_api import status
+from tinydb import TinyDB
+
 import requests
+import os
+
+db = TinyDB('/app/otpcodedb.json')
 
 OTPFormKey="Otpcode"
-OTPCodeStack=[]
 
 app = Flask(__name__)
 
-#Basic implementation using stack 
+#Basic implementation using TinyDB. We need external storage
+#because Flask spins up multiple processes for this client. 
 def storeAuthToken(myToken):
-    global OTPCodeStack
-    OTPCodeStack.append(myToken)
+    global db
+    db.insert({OTPFormKey:myToken})
     return None
 
 @app.route('/', methods=['GET'])
@@ -37,21 +42,31 @@ def save_token():
         storeAuthToken(otpcode)
         returnMessage="Token %s stored." % otpcode
         returnCode=status.HTTP_201_CREATED
-        print "Token %s received from authserver." % otpcode
+        print "exampleclient: Token %s received from authserver." % otpcode
     return returnMessage, returnCode
 
 @app.route('/secure', methods=['GET'])
 def get_secure_resource():
-    global OTPCodeStack
-    
-    returnMessage="No OTP code available."
-    returnCode=status.HTTP_401_UNAUTHORIZED
+    global db
+    if len(db)>0:
+        
+        otpcode=db.all()[-1][OTPFormKey]
+        
+        secureurl = 'http://testngx'
+        otpheader = {OTPFormKey: otpcode}
 
-    if OTPCodeStack:
-        otpcode=OTPCodeStack[-1]
-        #Can now use this code to attempt call on secure resource
-        returnMessage="Using OTP code %s to call secure resource." % otpcode
-        returnCode=status.HTTP_200_OK
+        resp = requests.get(secureurl, headers=otpheader)
+        
+        if resp.status_code == requests.codes.ok:
+            returnMessage = jsonify(resp.json())
+            print returnMessage
+        else:
+            returnMessage = "exampleclient: Used OTP code %s to call secure resource. Response was %d " % (otpcode, resp.status_code)
+            print returnMessage
+        returnCode=resp.status_code
+    else:
+        returnMessage="exampleclient: No OTP code available."
+        returnCode=status.HTTP_401_UNAUTHORIZED
     
     return returnMessage,returnCode
 

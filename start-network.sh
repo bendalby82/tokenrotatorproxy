@@ -1,20 +1,20 @@
 #!/bin/bash
+UNTRUSEDNET="untrustednet"
+SECURENET="securenet"
 
-NETNAME="untrustednet"
-RUNNING=$(docker network ls | grep -c $NETNAME)
+RUNNING=$(docker network ls | grep -c $UNTRUSEDNET)
 if [ $RUNNING -gt 0 ]; then
-    echo "$NETNAME already exists."
+    echo "$UNTRUSEDNET already exists."
 else
-    docker network create --driver bridge $NETNAME 
-    echo "No instance of $NETNAME found - created."
+    docker network create --driver bridge $UNTRUSEDNET 
+    echo "No instance of $UNTRUSEDNET found - created."
 fi
 
-NETNAME="securenet"
-RUNNING=$(docker network ls | grep -c $NETNAME)
+RUNNING=$(docker network ls | grep -c $SECURENET)
 if [ $RUNNING -gt 0 ]; then
-    echo "$NETNAME already exists."
+    echo "$SECURENET already exists."
 else
-    docker network create --driver bridge $NETNAME 
-    echo "No instance of $NETNAME found - created."
+    docker network create --driver bridge $SECURENET 
+    echo "No instance of $SECURENET found - created."
 fi
 

@@ -9,6 +9,8 @@ else
     echo "No instance of $SERVERCONTAINER found."
 fi
 
+rm $PWD/exampleclient/otpcodedb.json
+
 docker run --name $SERVERCONTAINER --network=untrustednet --restart=always -p 8012:80 \
 -v $PWD/exampleclient/:/app -d jazzdd/alpine-flask
 

@@ -26,8 +26,8 @@ app = Flask(__name__)
 
 def initializeTestCodes():
     myotpcodetable=dict()
-    validused=AuthorizedApplicationCode("abc123","http://app1.myurl.com",True)
-    validfresh=AuthorizedApplicationCode("abc456","http://app1.myurl.com",False)
+    validused=AuthorizedApplicationCode("abc123","http://exampleclient/tokencatcher",True)
+    validfresh=AuthorizedApplicationCode("abc456","http://exampleclient/tokencatcher",False)
     myotpcodetable[validused.otpcode]=validused
     myotpcodetable[validfresh.otpcode]=validfresh
     return myotpcodetable
@@ -49,6 +49,20 @@ def getAuthorizedApplicationCode(otpcode):
         myAAC = OTPCodeTable[otpcode]
     return myAAC
 
+#Placeholder - return:
+#   True if this token should be expired
+#   False if this token can continue to be used
+def checkTokenExpiry(authappcode):
+    return False
+
+#Simpistic function to get an unused code from the pool
+def getNewAuthorizedApplicationCode():
+    global OTPCodeTable
+    newcode=AuthorizedApplicationCode("","",True)
+    for k, v in OTPCodeTable.items():
+        if v.codeused==False:
+            newcode=v
+    return newcode
 
 def serializeheaders(mydic):
     headerstring = ""
@@ -63,23 +77,38 @@ def serializeheaders(mydic):
 def get_base():
     otpcode = getotpcode(request.headers)
     #print serializeheaders(request.headers)
-    return 'AUTH SERVICE UP AND RUNNING: Your optcode was: %s' % otpcode
+    return 'AUTH SERVICE UP AND RUNNING: Your otpcode was: %s' % otpcode
+
+def postNewToken():
+    newcode = getNewAuthorizedApplicationCode()
+    postpayload = {'Otpcode': newcode.otpcode} 
+    posturl = newcode.authappurl
+    resp = requests.post(posturl, data=postpayload)
+    return resp.status_code
 
 @app.route('/auth', methods=['GET'])
 def get_auth():
     otpcode = getotpcode(request.headers)
     returnMessage="Missing one time passcode"
+    #Default is to return 401
     returnCode=status.HTTP_401_UNAUTHORIZED
     if otpcode != "":
         myAAC = getAuthorizedApplicationCode(otpcode)
-        returnMessage="Unrecognised one time passcode"
         if myAAC:
-            returnMessage="Expired one time passcode"
-            if myAAC.codeused==False:
-                #TODO1: Expire code that was just used
-                #TODO2: Generate new code, save it, and post it to authappurl
-                returnMessage="OK: New code posted to %s" % myAAC.authappurl
+            if myAAC.codeused == False:
+                if checkTokenExpiry(myAAC):
+                    #TODO: Actually expire the token
+                    postresult = postNewToken()
+                    returnMessage = "OK. Valid token received and expired, new token posted with response %d" % postresult
+                else:
+                    returnMessage = "OK: Valid token received"
                 returnCode=status.HTTP_200_OK
+            else:
+                postresult = postNewToken()
+                returnMessage="Expired token. New token posted with response %d" % postresult
+        else:
+            returnMessage="Unrecognised token"
+    print "authserver: %s" % returnMessage
     return returnMessage, returnCode
 
 

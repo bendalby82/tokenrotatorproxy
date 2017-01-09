@@ -87,3 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# TinyDB temporary database
+exampleclient/otpcodedb.json
+
