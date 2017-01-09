@@ -14,6 +14,27 @@ This proof-of-concept will create two subnets connected by an Nginx proxy server
 
 ![Overview image](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/overview.png)
 
+## Proof-of-Concept Walkthrough
+### Requirements
+Docker (tested on v1.12.5 on OSX 10.12.2)
+### Setup
+1. Clone this repository to your local machine  
+2. Open a terminal inside the root `tokenrotatorproxy` folder
+3. Run `./start-all.sh`
+4. Run `./start-alpine-curl-untrustednet.sh` (keep this terminal somewhere handy)
+5. Open a new terminal and run `docker logs -f authserver` to watch activity on the `authserver` as requests are made.
+6. Open a new terminal and run `docker logs -f exampleclient` to watch activity on the `exampleclient` as requests are made.
+
+### Verifying Setup
+1. Open a web browser on [http://localhost:8012](http://localhost:8012) to verify the `exampleclient` is running.  
+![exampleclient image](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/01-1-exampleclient-up.png)
+2. Open a web browser on [http://localhost:8010](http://localhost:8010) to verify the `authserver` is running.  
+![authserver image](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/01-2-authserver-up.png)
+3. Open a web browser on [http://localhost:8081](http://localhost:8081) to verify the `testngx` proxy is running.  
+![testngx image](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/01-3-proxy-up.png)
+4. Open a web browser on [http://localhost:8011](http://localhost:8011) to verify the `secureservice` is running.  
+![secureservice image](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/01-4-secureservice-up.png)
+
 
 # Basic Test Calls  
 (From within Alpine Curl)  
