@@ -21,7 +21,7 @@ Docker (tested on v1.12.5 on OSX 10.12.2)
 1. Clone this repository to your local machine  
 2. Open a terminal inside the root `tokenrotatorproxy` folder
 3. Run `./start-all.sh`
-4. Run `./start-alpine-curl-untrustednet.sh` (keep this terminal somewhere handy)
+4. Run `./start-alpine-curl-untrustednet.sh` (keep this Alpine terminal somewhere handy)
 5. Open a new terminal and run `docker logs -f authserver` to watch activity on the `authserver` as requests are made.
 6. Open a new terminal and run `docker logs -f exampleclient` to watch activity on the `exampleclient` as requests are made.
 
@@ -35,23 +35,32 @@ Docker (tested on v1.12.5 on OSX 10.12.2)
 4. Open a web browser on [http://localhost:8011](http://localhost:8011) to verify the `secureservice` is running.  
 ![secureservice image](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/01-4-secureservice-up.png)
 
+NOTE: Even though `secureservice` is accessible to the Docker host (your machine), it is not accessible to machines on the `untrustednet` subnet. You can verify this by attempting to curl to the `secureservice` from the Alpine terminal.
 
-# Basic Test Calls  
-(From within Alpine Curl)  
+### First Call
+1. We first make a call from `exampleclient` to `secureservice` via `testngx` proxy, without any tokens being present. We can do this by calling [http://localhost:8012/secure](http://localhost:8012/secure)  
+2. We note that the call quickly fails:  
+![exampleclient fails](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/02-example-client-first-time.png)  
 
-    #Valid request
-    curl -X GET -H "Otpcode: abc456" -H "Cache-Control: no-cache" "http://testngx/"
+### Second Call
+1. We now 'prime the pump,' by sending a stale token from our Alpine terminal to the `exampleclient` container:  
+  `curl -X POST -F "Otpcode=abc123" "http://exampleclient/tokencatcher"`
+2. We should see a result like the following in our terminal:  
+![alpine result](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/03-1-post-expired-token.png)  
+3. If we are monitoring the logs for `exampleclient`, we will also see a message there:  
+![exampleclient receives](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/03-2-exampleclient-receives.png)  
+4. We now make another call from `exampleclient` to `secureservice` ([http://localhost:8012/secure](http://localhost:8012/secure)) - the call fails again, but we a get a different message:  
+![exampleclient round two](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/03-3-exampleclient-secondtime.png)  
+5. Behind the scenes, our `authserver` has posted a new token to the URL it holds for the `exampleclient` application. Note that it does this via DNS. We can again see this in the logs for the `exampleclient` container:  
+![exampleclient more logs](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/03-4-exampleclient-receives.png)  
 
-    #Expired token
-    curl -X GET -H "Otpcode: abc123" -H "Cache-Control: no-cache" "http://testngx/"
+### Third Call
+1. We make a final call from `exampleclient` ([http://localhost:8012/secure](http://localhost:8012/secure)) - this time the call succeeds:  
+![exampleclient success](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/04-1-exampleclient-thirdtime.png)  
+2. And we can see that the token has been accepted in the logs for `authserver` also:  
+![authserver yes](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/04-2-authserver.png)  
 
-    #Prime client with an expired code
-    curl -X POST -F "Otpcode=abc123" "http://exampleclient/tokencatcher"
-
-# Notes  
-Nginx - Beginner’s Guide  
-http://nginx.org/en/docs/beginners_guide.html  
-
+# References  
 Docker Nginx Image  
 https://hub.docker.com/_/nginx/  
 
