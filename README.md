@@ -7,6 +7,7 @@ Proof of concept for a HTTP proxy that *pushes* rotating authentication tokens t
 [2.2 Setup](#22-setup)  
 [2.3 Verifying Setup](#23-verifying-setup)  
 [2.4 Running the Walkthrough](#24-running-the-walkthrough)  
+[2.5 Sequence Diagram for Second and Third Calls](#25-sequence-diagram-for-second-and-third-calls)  
 [3. Directions for Further Research](#3-directions-for-further-research)  
 [4. Motivation](#4-motivation)  
 [5. References](#5-references)  
@@ -61,6 +62,10 @@ NOTE: Even though `secureservice` is accessible to the Docker host (your machine
 ![exampleclient success](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/04-1-exampleclient-thirdtime.png)  
 2. And we can see that the token has been accepted in the logs for `authserver` also:  
 ![authserver yes](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/04-2-authserver.png)  
+
+## 2.5 Sequence Diagram for Second and Third Calls
+The sequence diagram below illustrates stages 2.4.2 and 2.4.3 in the walkthrough visually:  
+![sequence diagram](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/sequence-diagram.png)
 
 ## 3. Directions for Further Research
 1. The proxy in the PoC uses an external auth server for making authentication decisions. It may be much more performant to run the auth function on the same machine, perhaps using something like the [Lua scripting capabilities](http://www.arpalert.org/haproxy-lua.html) of HA Proxy.  
