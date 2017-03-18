@@ -13,7 +13,7 @@ from tinydb import TinyDB
 import requests
 import os
 
-db = TinyDB('/app/otpcodedb.json')
+db = TinyDB('/tmp/otpcodedb.json')
 
 OTPFormKey="Otpcode"
 
