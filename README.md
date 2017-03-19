@@ -46,7 +46,7 @@ Vagrant (tested on 1.9.1 on OSX 10.12.2)
     tmux
     cd tokenrotatorproxy
 ````
-5. Proceed from Step 3 above.
+5. Proceed from Step 3 [above](#221-local-machine-method).
 ### 2.3 Verifying Setup
 1. Open a web browser on [http://localhost:8012](http://localhost:8012) to verify the `exampleclient` is running:  
 ![exampleclient image](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/01-1-exampleclient-up.png)
