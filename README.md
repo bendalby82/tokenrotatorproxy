@@ -18,16 +18,35 @@ This proof-of-concept creates two subnets connected by an Nginx proxy server. Th
 ![Overview image](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/overview.png)
 
 ## 2. Proof-of-Concept Walkthrough
-### 2.1 Requirements
+### 2.1 Requirements  
+#### 2.1.2 Local Machine Method  
 Docker (tested on v1.12.5 on OSX 10.12.2)
-### 2.2 Setup
+#### 2.1.2 Vagrant Machine Method  
+Vagrant (tested on 1.9.1 on OSX 10.12.2)  
+### 2.2 Setup  
+#### 2.2.1 Local Machine Method  
 1. Clone this repository to your local machine  
 2. Open a terminal inside the root `tokenrotatorproxy` folder
 3. Run `./start-all.sh`
 4. Run `./start-alpine-curl-untrustednet.sh` (keep this Alpine terminal somewhere handy)
 5. Open a new terminal and run `docker logs -f authserver` to watch activity on the `authserver` as requests are made.
-6. Open a new terminal and run `docker logs -f exampleclient` to watch activity on the `exampleclient` as requests are made.
+6. Open a new terminal and run `docker logs -f exampleclient` to watch activity on the `exampleclient` as requests are made.  
 
+#### 2.2.2 Vagrant Machine Method   
+1. Clone the repository to your local machine  
+2. Open a terminal inside the `tokenrotatorproxy` folder  
+3. Use Vagrant to launch the Docker host VM:  
+````
+    cd demobox
+    vagrant up
+````
+4. Open a terminal on the Vagrant machine:
+````
+    vagrant ssh
+    tmux
+    cd tokenrotatorproxy
+````
+5. Proceed from Step 3 above.
 ### 2.3 Verifying Setup
 1. Open a web browser on [http://localhost:8012](http://localhost:8012) to verify the `exampleclient` is running:  
 ![exampleclient image](https://github.com/bendalby82/tokenrotatorproxy/blob/master/images/01-1-exampleclient-up.png)
